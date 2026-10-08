@@ -1,0 +1,60 @@
+# All score components are normalized to 0..100 before weighted scoring.
+models:
+  clip_name: openai/clip-vit-base-patch32
+  yolo_name: yolov8n.pt
+  device: auto
+processing:
+  image_extensions: [".jpg", ".jpeg", ".png", ".heic", ".heif"]
+  max_analysis_side: 1280
+  yolo_confidence: 0.25
+  duplicate_similarity_threshold: 0.90
+  top_k: 10
+  max_per_category_in_results: 2
+  # Images failing these technical/frame checks are excluded before ranking.
+  # Set a value to 0 to disable a particular gate for a difficult venue.
+  eligibility:
+    min_sharpness: 45
+    max_tilt_degrees: 8
+    # At 10° or more, even moderately supported roll evidence is discarded.
+    min_tilt_confidence: 0.15
+    min_quality_score: 40
+    min_composition_score: 30
+scoring:
+  weights:
+    semantic_relevance: 0.35
+    image_quality: 0.30
+    event_coverage: 0.20
+    composition: 0.15
+  category_importance_mix: 0.35
+  category_importance:
+    FULL_HALL: 100
+    SPEAKER_AND_AUDIENCE: 95
+    SPEAKER: 90
+    EVENT_ACTIVITY: 85
+    GROUP_PHOTO: 80
+    AUDIENCE: 70
+    STAGE: 45
+    OTHER: 20
+categories:
+  FULL_HALL:
+    - "a wide photograph showing the entire seminar hall with many attendees"
+    - "a wide indoor event photograph showing a seminar audience and stage"
+  SPEAKER:
+    - "a photograph showing a speaker giving a presentation at a seminar"
+    - "a speaker talking on a seminar stage with a microphone or presentation screen"
+  SPEAKER_AND_AUDIENCE:
+    - "a photograph showing a speaker and an audience at a seminar"
+    - "a presenter speaking to seated attendees in an event hall"
+  AUDIENCE:
+    - "a photograph showing students or attendees listening in a seminar audience"
+  EVENT_ACTIVITY:
+    - "a photograph of certificate distribution at a seminar event"
+    - "a photograph of prize distribution or award presentation on stage"
+    - "an event participant receiving an award or certificate from an organizer"
+    - "a photograph showing a seminar event activity or audience interaction"
+  GROUP_PHOTO:
+    - "a group photograph of seminar participants posing together"
+  STAGE:
+    - "a photograph of a seminar stage, podium, banner, or presentation screen"
+  OTHER:
+    - "a photograph related to an indoor seminar event"
